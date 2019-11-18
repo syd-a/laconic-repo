@@ -24,13 +24,21 @@ class TagPage extends Component {
     super(props);
     this.state = {
       name: this.props.match.params.tag_name,
-      urlPath: "/api/aphorisms/tag/" + this.props.match.params.tag_name
+	  keyVal: "APHORISM_LIST_" + this.props.match.params.tag_name,
+      urlPath: "/api/aphorisms/tag/" + this.props.match.params.tag_name,
+	  requiresReload: false,
     };
+	this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
   }
 
   componentWillReceiveProps(receiveProps){
     if(receiveProps.location.name !== this.state.name) {
-      window.location.reload();
+      this.setState({
+		  name: receiveProps.location.name,
+	      keyVal: "APHORISM_LIST_" + receiveProps.location.name,
+          urlPath: "/api/aphorisms/tag/" + receiveProps.location.name,
+		  requiresReload: true
+	  });
     }
   }
 
@@ -38,7 +46,7 @@ class TagPage extends Component {
     return (
       <div style={this.tagPageStyle()}>
         <h1 style={this.tagPageTitleStyle()}>#{this.state.name}</h1>
-        <AphorismList path={this.state.urlPath} />
+		<AphorismList key={this.state.keyVal} path={this.state.urlPath} />
       </div>
     )
   }
