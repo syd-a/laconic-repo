@@ -14,8 +14,8 @@ const {retErrorMessages, calcLimitAndSkip} = require("./routes_helper");
 const express = require("express");
 const speakerRouter = express.Router();
 
-speakerRouter.post("/index", async (req, res) => {
-  let {limitVal, skipVal} = calcLimitAndSkip(req.body.limit, req.body.skip);
+speakerRouter.get("/index", async (req, res) => {
+  let {limitVal, skipVal} = calcLimitAndSkip(req.params.limit, req.params.skip);
 
   let speakers = await Speaker.find(
     {},
@@ -65,7 +65,7 @@ speakerRouter.post("/login", async (req, res) => {
   }
 });
 
-speakerRouter.post("/follow",
+speakerRouter.patch("/follow",
   passport.authenticate("jwt", {session: false}),
   async (req, res) => {
     let toFollow = await Speaker.findOne({name: req.body.name}, "name followers");
@@ -86,7 +86,7 @@ speakerRouter.post("/follow",
     }
 });
 
-speakerRouter.post("/unfollow",
+speakerRouter.patch("/unfollow",
   passport.authenticate("jwt", {session: false}),
   async (req, res) => {
     let toUnfollow = await Speaker.findOne({name: req.body.name}, "name followers");
@@ -107,8 +107,8 @@ speakerRouter.post("/unfollow",
     }
 });
 
-speakerRouter.post("/name/:speaker_name", async (req, res) => {
-  let {limitVal, skipVal} = calcLimitAndSkip(req.body.limit, req.body.skip);
+speakerRouter.get("/name/:speaker_name", async (req, res) => {
+  let {limitVal, skipVal} = calcLimitAndSkip(req.params.limit, req.params.skip);
 
   let aphorisms = await Aphorism.find(
     {speaker_name: req.params.speaker_name},
@@ -135,10 +135,10 @@ speakerRouter.get("/name/:speaker_name/followers", async (req, res) => {
   res.json(speaker.followers);
 });
 
-speakerRouter.post("/feed",
+speakerRouter.get("/feed",
   passport.authenticate("jwt", {session: false}),
   async (req, res) => {
-    let {limitVal, skipVal} = calcLimitAndSkip(req.body.limit, req.body.skip);
+    let {limitVal, skipVal} = calcLimitAndSkip(req.params.limit, req.params.skip);
 
     let speaker = await Speaker.findById(req.user.id);
     let feedAphorisms = await Aphorism.find(
@@ -150,10 +150,10 @@ speakerRouter.post("/feed",
     return res.json(feedAphorisms);
 });
 
-speakerRouter.post("/self",
+speakerRouter.get("/self",
   passport.authenticate("jwt", {session: false}),
   async (req, res) => {
-    let {limitVal, skipVal} = calcLimitAndSkip(req.body.limit, req.body.skip);
+    let {limitVal, skipVal} = calcLimitAndSkip(req.params.limit, req.params.skip);
 
     let speaker = await Speaker.findById(req.user.id);
     let selfAphorisms = await Aphorism.find(
