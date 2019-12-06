@@ -3,7 +3,7 @@ const SALT_WORK_FACTOR = 10;
 
 const jwt = require("jsonwebtoken");
 const secretOrKey = require("../config/secrets/jwt_key").secretOrKey;
-const TIMESPAN_MINUTES = 100;
+const TIMESPAN_MINUTES = 48000;
 
 const passport = require("passport");
 
@@ -57,7 +57,7 @@ speakerRouter.post("/login", async (req, res) => {
     if(samePassword) {
       const expDate = new Date(Date.now() + 60000 * TIMESPAN_MINUTES);
       const data = {id: speaker.id, name: speaker.name, expDate: expDate};
-      token = await jwt.sign(data, secretOrKey, {expiresIn: (480 * TIMESPAN_MINUTES)});
+      token = await jwt.sign(data, secretOrKey, {expiresIn: (TIMESPAN_MINUTES)});
       return res.json({data: data, token: "Bearer " + token});
     } else {
       retErrorMessages(res, ["Password is not correct."]);
